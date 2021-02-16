@@ -1,0 +1,60 @@
+<html>
+<head>
+    <title>Stream Timer</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="timer">
+    <div id="minute"></div>
+    <span class="sep">:</span>
+    <div id="seconds"></div>
+</div>
+<script>
+    // time=03:00&type=crono,temp
+    const urlSearch = window.location.search;
+    const query = new URLSearchParams(urlSearch);
+    let [minute, seconds] = query.get('time').split(':')
+    minute = parseInt(minute)
+    seconds = parseInt(seconds)
+    if(query.get('type') === 'crono') {
+      let min = 0;
+      let sec = 0;
+      const timer = setInterval(() => {
+        document.getElementById('minute').innerText = formatNumber(min);
+        document.getElementById('seconds').innerText = formatNumber(sec);
+        if(sec === seconds && min === minute) {
+          clearInterval(timer)
+        }
+        if(sec < 59) {
+          sec++;
+        } else if(sec === 59) {
+          sec = 0;
+          min++
+        }
+
+      }, 1000)
+    }else {
+      const temp = setInterval(() => {
+        document.getElementById('minute').innerText = formatNumber(minute);
+        document.getElementById('seconds').innerText = formatNumber(seconds);
+        if(seconds === 0 && minute > 0) { //02:59 => bajamos de 03 a 02 los minutos
+          seconds = 59;
+          minute-= 1
+        } else {
+          seconds-=1;
+        }
+        if(seconds === -1 && minute === 0) {
+          clearInterval(temp)
+        }
+      }, 1000)
+    }
+
+    function formatNumber(number) {
+      return (number < 10 ? '0' : '') + number
+    }
+</script>
+</body>
+</html>
